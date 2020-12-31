@@ -1,0 +1,43 @@
+FROM ubuntu:20.10 AS dependencies
+
+## for apt to be noninteractive
+ENV DEBIAN_FRONTEND noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN true
+
+
+FROM dependencies as builder
+## preesed tzdata, update package index, upgrade packages and install needed software
+RUN truncate -s0 /tmp/preseed.cfg; \
+        echo "tzdata tzdata/Areas select US" >> /tmp/preseed.cfg; \
+        echo "tzdata tzdata/Zones/US select Chicago" >> /tmp/preseed.cfg; \
+        debconf-set-selections /tmp/preseed.cfg && \
+        rm -f /etc/timezone /etc/localtime && \
+        apt-get update && \
+        apt-get -y install build-essential clang python3-dev cmake libboost-all-dev git libeigen3-dev \
+        bison flex libreadline-dev gawk tcl-dev libffi-dev graphviz xdot pkg-config zlib1g-dev libftdi-dev
+
+# Build trellis
+RUN mkdir /tmp/src && cd /tmp/src && \
+        git clone --recursive https://github.com/YosysHQ/prjtrellis && \
+        cd /tmp/src/prjtrellis/libtrellis && \
+        cmake -DCMAKE_INSTALL_PREFIX=/opt/trellis && \
+        make -j$(nproc) && make install
+
+# Build icestorm
+RUN mkdir /opt/icestorm && cd /tmp/src && \
+        git clone https://github.com/YosysHQ/icestorm.git && \
+        cd /tmp/src/icestorm && \
+        PREFIX=/opt/icestorm make -j$(nproc) install
+        
+# Build nextpnr
+RUN cd /tmp/src && \
+        git clone https://github.com/YosysHQ/nextpnr.git && \
+        cd /tmp/src/nextpnr && \
+        cmake . -DARCH="ice40;ecp5" -DICESTORM_INSTALL_PREFIX=/opt/icestorm -DTRELLIS_INSTALL_PREFIX=/opt/trellis -DCMAKE_INSTALL_PREFIX=/opt/nextpnr && \
+        make -j$(nproc) && \
+        make install
+
+# Build yosys
+RUN mkdir /opt/yosys && cd /tmp/src && cd /tmp/src && \
+        git clone https://github.com/YosysHQ/yosys.git && \
+        cd /tmp/src/yosys && mkdir build && cd build && PREFIX=/opt/yosys make -f ../Makefile install
