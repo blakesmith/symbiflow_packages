@@ -1,2 +1,2 @@
 ubuntu_build:
-	docker build -f ubuntu/Dockerfile_ubuntu2010
+	docker build -f ubuntu/Dockerfile_ubuntu2010 .
