@@ -34,3 +34,15 @@ provides intermediate targets, depending on what you're trying to do:
 2. `builder` - An ubuntu docker image with all the above projects compiled with a prefix of `/opt`. Use `make ubuntu_builder` to build.
 3. `packaging` - An ubuntu docker image with all the ubuntu packages built and placed in `/opt/packaging`. Use `make ubuntu_packaging` to build.
 4. `image` - An ubuntu docker image with all development build artifacts removed, and the packages freshly installed via aptitude. Useful if you just want to use the docker image's compiled packages directly, much much slimmer in size than the above images. Use `make ubuntu_image` to build.
+
+## Using the Docker Image
+
+Once you've built the docker image, you can run it, mounting your
+current directory to `/mnt/user` inside the docker container:
+
+```
+docker run -it --volume `pwd`:/mnt/user symbiflow_fpga
+```
+
+This is useful to mount your projects inside of the container. All
+Symbiflow binaries should be installed at PREFIX `/usr`, and on the $PATH.
