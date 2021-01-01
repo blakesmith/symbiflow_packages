@@ -3,7 +3,7 @@ all: ubuntu_image
 ubuntu_builder:
 	docker build --target builder -f ubuntu/Dockerfile_ubuntu2010 .
 
-ubuntu_packages:
+ubuntu_packaging:
 	docker build --target packaging -f ubuntu/Dockerfile_ubuntu2010 .
 
 ubuntu_image:
