@@ -6,7 +6,6 @@ ENV DEBCONF_NONINTERACTIVE_SEEN true
 
 ### Building
 
-FROM dependencies as builder
 ## preesed tzdata, update package index, upgrade packages and install needed software
 RUN truncate -s0 /tmp/preseed.cfg; \
         echo "tzdata tzdata/Areas select US" >> /tmp/preseed.cfg; \
@@ -17,6 +16,7 @@ RUN truncate -s0 /tmp/preseed.cfg; \
         apt-get -y install build-essential clang python3-dev cmake libboost-all-dev git libeigen3-dev \
         bison flex libreadline-dev gawk tcl-dev libffi-dev graphviz xdot pkg-config zlib1g-dev libftdi-dev
 
+FROM dependencies as builder
 # Build trellis
 RUN mkdir /tmp/src && cd /tmp/src && \
         git clone --recursive https://github.com/YosysHQ/prjtrellis && \
