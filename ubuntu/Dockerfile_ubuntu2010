@@ -90,4 +90,4 @@ COPY --from=packaging /opt/packaging/icestorm.deb .
 COPY --from=packaging /opt/packaging/nextpnr.deb .
 COPY --from=packaging /opt/packaging/yosys.deb .
 RUN apt-get update
-RUN apt install -y /tmp/libtrellis.deb /tmp/icestorm.deb /tmp/nextpnr.deb /tmp/yosys.deb
+RUN apt install -y /tmp/libtrellis.deb && apt install -y /tmp/icestorm.deb && apt install -y /tmp/nextpnr.deb && apt install -y /tmp/yosys.deb
