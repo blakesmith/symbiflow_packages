@@ -46,12 +46,13 @@ RUN mkdir /opt/yosys && cd /tmp/src && cd /tmp/src && \
 
 ### Packaging
 FROM builder AS packaging
+ARG TAG # Needed to pass to package dependencies
 RUN apt-get -y install ruby
 RUN mkdir -p /opt/packaging/libtrellis/DEBIAN /opt/packaging/icestorm/DEBIAN /opt/packaging/nextpnr/DEBIAN /opt/packaging/yosys/DEBIAN
 
 # Trellis packaging
 COPY ubuntu/libtrellis.control.erb /tmp/libtrellis.control.erb
-RUN cd /tmp/src/prjtrellis && cat /tmp/libtrellis.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/libtrellis/DEBIAN/control
+RUN cd /tmp/src/prjtrellis && cat /tmp/libtrellis.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; TAG=ENV["TAG"]; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/libtrellis/DEBIAN/control
 RUN mkdir -p /opt/packaging/libtrellis/usr && \
         cp -rv /opt/libtrellis/bin /opt/packaging/libtrellis/usr/bin && \
         cp -rv /opt/libtrellis/lib /opt/packaging/libtrellis/usr/lib && \
@@ -60,7 +61,7 @@ RUN dpkg-deb --build /opt/packaging/libtrellis
 
 # icestorm packaging
 COPY ubuntu/icestorm.control.erb /tmp/icestorm.control.erb
-RUN cd /tmp/src/icestorm && cat /tmp/icestorm.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/icestorm/DEBIAN/control
+RUN cd /tmp/src/icestorm && cat /tmp/icestorm.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; TAG=ENV["TAG"]; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/icestorm/DEBIAN/control
 RUN mkdir -p /opt/packaging/icestorm/usr && \
         cp -rv /opt/icestorm/bin /opt/packaging/icestorm/usr/bin && \
         cp -rv /opt/icestorm/share /opt/packaging/icestorm/usr/share
@@ -68,14 +69,14 @@ RUN dpkg-deb --build /opt/packaging/icestorm
 
 # nextpnr packaging
 COPY ubuntu/nextpnr.control.erb /tmp/nextpnr.control.erb
-RUN cd /tmp/src/nextpnr && cat /tmp/nextpnr.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/nextpnr/DEBIAN/control
+RUN cd /tmp/src/nextpnr && cat /tmp/nextpnr.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; TAG=ENV["TAG"]; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/nextpnr/DEBIAN/control
 RUN mkdir -p /opt/packaging/nextpnr/usr && \
         cp -rv /opt/nextpnr/bin /opt/packaging/nextpnr/usr/bin
 RUN dpkg-deb --build /opt/packaging/nextpnr
 
 # yosys packaging
 COPY ubuntu/yosys.control.erb /tmp/yosys.control.erb
-RUN cd /tmp/src/yosys && cat /tmp/yosys.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/yosys/DEBIAN/control
+RUN cd /tmp/src/yosys && cat /tmp/yosys.control.erb | ruby -e 'require "erb"; VERSION="0.1.0-" + `git rev-parse HEAD`; TAG=ENV["TAG"]; puts ERB.new($stdin.read, nil, "-").result' > /opt/packaging/yosys/DEBIAN/control
 RUN mkdir -p /opt/packaging/yosys/usr && \
         cp -rv /opt/yosys/bin /opt/packaging/yosys/usr/bin && \
         cp -rv /opt/yosys/share /opt/packaging/yosys/usr/share

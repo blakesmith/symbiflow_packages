@@ -4,5 +4,9 @@ Section: base
 Priority: optional
 Architecture: amd64
 Maintainer: Blake Smith <blakesmith0@gmail.com>
+<% if TAG == '20.04' -%>
+Depends: libreadline8, libffi7, libtcl8.6, libtinfo6, zlib1g
+<% else -%>
 Depends: libreadline8, libffi8ubuntu1, libtcl8.6, libtinfo6, zlib1g
+<% end -%>
 Description: Yosys is a framework for RTL synthesis tools. It currently has extensive Verilog-2005 support and provides a basic set of synthesis algorithms for various application domains.
