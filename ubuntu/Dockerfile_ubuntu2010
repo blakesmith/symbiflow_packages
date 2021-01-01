@@ -1,4 +1,5 @@
-FROM ubuntu:20.10 AS dependencies
+ARG TAG=20.10
+FROM ubuntu:${TAG} AS dependencies
 
 ## for apt to be noninteractive
 ENV DEBIAN_FRONTEND noninteractive
@@ -82,7 +83,7 @@ RUN dpkg-deb --build /opt/packaging/yosys
 
 
 # Install into target
-FROM ubuntu:20.10 AS image
+FROM ubuntu:${TAG} AS image
 WORKDIR /tmp
 COPY --from=packaging /opt/packaging/libtrellis.deb .
 COPY --from=packaging /opt/packaging/icestorm.deb .

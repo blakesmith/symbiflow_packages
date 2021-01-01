@@ -2,7 +2,7 @@
 
 This repository provides a Docker image to build Ubuntu 20.10 packages for
 the [Symbiflow FPGA toolchain](https://symbiflow.github.io/). It provides a docker image that can
-build the following packages:
+build the following packages from the most recent code on github:
 
 - [Project Trellis (libtrellis)](https://github.com/YosysHQ/prjtrellis). For targeting Lattice ECP5 devices.
 - [Project Icestorm](https://github.com/YosysHQ/icestorm). For targeting Lattice ice40 devices.
@@ -17,6 +17,14 @@ To build a working docker image with the above packages installed from an Ubuntu
 git clone https://github.com/blakesmith/symbiflow_packages.git
 cd symbiflow_packages
 make ubuntu_image
+```
+
+This will produce a docker image tagged `symbiflow_fpga`.
+
+To build with Ubuntu 20.04, override the `TAG` variable:
+
+```
+make ubuntu_image TAG=20.04
 ```
 
 The docker image build process uses [Docker Multistage Building](https://docs.docker.com/develop/develop-images/multistage-build/), and
